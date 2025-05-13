@@ -7,8 +7,9 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1 id="title">passage</h1>
-  <p id="prompt">loading...</p>
+  <h1 id="title">Passage 1</h1>
+  <p id="meta" style="color: skyblue; font-size: 0.9rem; margin-bottom: 0.5em;"></p>
+  <p id="prompt">Loading...</p>
   <textarea id="typingBox" placeholder="Start typing to begin timing"></textarea>
   <button id="nextBtn">Next</button>
   <canvas id="chart" width="500" height="300" style="display:none;"></canvas>
@@ -18,12 +19,19 @@
   <script>
     const prompts = [];
     const passageFiles = ["passage1.txt", "passage2.txt", "passage3.txt"];
+    const passageMeta = [
+      "Fyodor Dostoevsky, *White Nights* (1848)",
+      "William Shakespeare *Romeo and Juliet* (1597)", 
+      "Karl Marx, *On the Jewish Question* (1843)"
+    ];
+
     let stage = 0;
     const timings = [];
     let keyTimes = [];
 
     const title = document.getElementById("title");
     const promptText = document.getElementById("prompt");
+    const metaText = document.getElementById("meta");
     const box = document.getElementById("typingBox");
     const btn = document.getElementById("nextBtn");
     const chart = document.getElementById("chart");
@@ -40,6 +48,7 @@
 
     function updatePrompt() {
       const current = prompts[stage];
+      metaText.textContent = passageMeta[stage];
       promptText.innerHTML = "";
       for (let i = 0; i < current.length; i++) {
         const span = document.createElement("span");
@@ -83,6 +92,7 @@
       box.style.display = "none";
       btn.style.display = "none";
       promptText.style.display = "none";
+      metaText.style.display = "none";
       title.textContent = "Results";
       chart.style.display = "block";
 
@@ -141,5 +151,6 @@
   </script>
 </body>
 </html>
+
 
 
