@@ -3,154 +3,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Typing Similarity Test</title>
+  <title>amogus</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="images.png">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
-  <h1 id="title">Passage 1</h1>
-  <p id="meta" style="color: skyblue; font-size: 0.9rem; margin-bottom: 0.5em;"></p>
-  <p id="prompt">Loading...</p>
-  <textarea id="typingBox" placeholder="Start typing to begin timing"></textarea>
-  <button id="nextBtn">Next</button>
-  <canvas id="chart" width="500" height="300" style="display:none;"></canvas>
-  <div id="results"></div>
+  <div id="intro">
+    <h1>my fingers are mystical</h1>
+    <p style="color: skyblue; font-size: 0.9rem;">are you amongus?</p>
+    <p style="text-align:left; max-width: 600px; margin: 0 auto;">
+      <strong>log-likelihood</strong> measures how similar ur keystrokes are across passages.
+      <br><br>
+      Formally, given two sequences \(X = [x_1, \dots, x_n]\) and \(Y = [y_1, \dots, y_n]\), we compute:
+      <br><br>
+      $$ \log L = -\sum_i \frac{(x_i - y_i)^2}{2\sigma^2} $$
+      <br>
+      a higher log-likelihood means the typing rhythms are more similar — suggesting the same person likely typed both.
+    </p>
+    <button id="startBtn">start</button>
+  </div>
+
+  <div id="app" style="display:none;">
+    <h1 id="title">passage</h1>
+    <p id="meta" style="color: skyblue; font-size: 0.9rem; margin-bottom: 0.5em;"></p>
+    <div id="promptBox">
+      <p id="prompt">a summoner is connecting...</p>
+      <p id="overlay"></p>
+    </div>
+    <canvas id="chart" width="500" height="300" style="display:none;"></canvas>
+    <div id="results"></div>
+    <button id="downloadBtn" style="display:none;">download ur typing biometrics</button>
+    <button id="saveImgBtn" style="display:none;">save pic</button>
+    <button id="restartBtn" style="display:none;">go back to beginning</button>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    const prompts = [];
-    const passageFiles = ["passage1.txt", "passage2.txt", "passage3.txt"];
-    const passageMeta = [
-      "Fyodor Dostoevsky, *White Nights* (1848)",
-      "William Shakespeare *Romeo and Juliet* (1597)", 
-      "Karl Marx, *On the Jewish Question* (1843)"
-    ];
-
-    let stage = 0;
-    const timings = [];
-    let keyTimes = [];
-
-    const title = document.getElementById("title");
-    const promptText = document.getElementById("prompt");
-    const metaText = document.getElementById("meta");
-    const box = document.getElementById("typingBox");
-    const btn = document.getElementById("nextBtn");
-    const chart = document.getElementById("chart");
-    const results = document.getElementById("results");
-
-    async function loadPassages() {
-      for (const file of passageFiles) {
-        const res = await fetch(file);
-        const text = await res.text();
-        prompts.push(text.trim());
-      }
-      updatePrompt();
-    }
-
-    function updatePrompt() {
-      const current = prompts[stage];
-      metaText.textContent = passageMeta[stage];
-      promptText.innerHTML = "";
-      for (let i = 0; i < current.length; i++) {
-        const span = document.createElement("span");
-        span.textContent = current[i];
-        promptText.appendChild(span);
-      }
-    }
-
-    box.addEventListener("input", () => {
-      const typed = box.value;
-      const spans = promptText.querySelectorAll("span");
-      for (let i = 0; i < spans.length; i++) {
-        spans[i].classList.remove("active");
-        if (typed[i] === spans[i].textContent) {
-          spans[i].classList.add("active");
-        }
-      }
-    });
-
-    box.addEventListener("keydown", () => {
-      const now = performance.now();
-      if (keyTimes.length > 0) {
-        timings[stage].push(now - keyTimes[keyTimes.length - 1]);
-      }
-      keyTimes.push(now);
-    });
-
-    btn.onclick = () => {
-      if (!timings[stage]) timings[stage] = [];
-      if (++stage < prompts.length) {
-        title.textContent = `Passage ${stage + 1}`;
-        box.value = "";
-        keyTimes = [];
-        updatePrompt();
-      } else {
-        showResults();
-      }
-    };
-
-    function showResults() {
-      box.style.display = "none";
-      btn.style.display = "none";
-      promptText.style.display = "none";
-      metaText.style.display = "none";
-      title.textContent = "Results";
-      chart.style.display = "block";
-
-      const all = timings.flat();
-      const labels = all.map((_, i) => i);
-      const data = {
-        labels,
-        datasets: timings.map((set, i) => ({
-          label: `Passage ${i + 1}`,
-          data: set,
-          fill: false,
-          tension: 0.3
-        }))
-      };
-
-      new Chart(chart, {
-        type: 'line',
-        data,
-        options: {
-          scales: {
-            y: {
-              title: {
-                display: true,
-                text: 'Interval (ms)'
-              }
-            },
-            x: {
-              title: {
-                display: true,
-                text: 'Keystroke Index'
-              }
-            }
-          }
-        }
-      });
-
-      const logLik = (a, b) => {
-        const mu = x => x.reduce((a,b)=>a+b,0)/x.length;
-        const sigma2 = x => mu(x.map(y => (y - mu(x)) ** 2));
-        const l = (x, y) => x.reduce((sum, xi, i) => sum - ((xi - y[i]) ** 2) / (2 * sigma2(x)), 0);
-        return l(a, b).toFixed(2);
-      };
-
-      const sim12 = logLik(timings[0], timings[1]);
-      const sim13 = logLik(timings[0], timings[2]);
-      const sim23 = logLik(timings[1], timings[2]);
-      results.innerHTML = `
-        <p>Similarity (log-likelihood-ish):</p>
-        <p>1 vs 2: ${sim12}</p>
-        <p>1 vs 3: ${sim13}</p>
-        <p>2 vs 3: ${sim23}</p>
-      `;
-    }
-
-    loadPassages();
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
+
+
 
 
 
