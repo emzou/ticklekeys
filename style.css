@@ -9,43 +9,48 @@ body {
   text-align: center;
 }
 
-#prompt {
-  border: 2px solid #3498db; /* blue border */
+#promptBox {
+  border: 2px solid #3498db;
   padding: 1em;
   border-radius: 8px;
-  background: #ffffff;
+  background: transparent;
   color: #aaa;
   margin-bottom: 1em;
   white-space: pre-wrap;
+  text-align: left;
 }
 
-#prompt span.active {
+#promptBox span.active {
   color: #000;
 }
 
-textarea {
-  width: 100%;
-  height: 100px;
+#promptBox span {
+  color: #aaa;
+}
+
+#startBtn {
+  margin-top: 3em;
+  padding: 0.6em 1.8em;
   font-size: 1rem;
-  margin-top: 1em;
-  border: 2px solid #ccc;
+  background: transparent;
+  color: #3498db;
+  border: 2px solid #3498db;
   border-radius: 6px;
-  padding: 0.5em;
+  cursor: pointer;
+}
+
+#startBtn:hover {
+  background: #ecf7ff;
 }
 
 #nextBtn {
   margin-top: 1em;
   padding: 0.5em 1.5em;
   font-size: 1rem;
-  background: #3498db;
-  color: white;
-  border: none;
+  background: transparent;
+  border: 2px solid #ccc;
   border-radius: 6px;
   cursor: pointer;
-}
-
-#nextBtn:hover {
-  background: #2980b9;
 }
 
 canvas {

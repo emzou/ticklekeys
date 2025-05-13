@@ -3,46 +3,46 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>amogus</title>
-  <link rel="stylesheet" href="style.css">
+  <title>typing id</title>
   <link rel="icon" type="image/png" href="images.png">
+  <link rel="stylesheet" href="style.css">
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
   <div id="intro">
-    <h1>my fingers are mystical</h1>
-    <p style="color: skyblue; font-size: 0.9rem;">are you amongus?</p>
+    <h1>hey</h1>
+    <p style="color: skyblue; font-size: 0.9rem;">a playful keystroke rhythm experiment</p>
     <p style="text-align:left; max-width: 600px; margin: 0 auto;">
-      <strong>log-likelihood</strong> measures how similar ur keystrokes are across passages.
+      when u type, your rhythm forms a pattern. we use <strong>log-likelihood</strong> to measure how similar those patterns are across passages.
       <br><br>
       Formally, given two sequences \(X = [x_1, \dots, x_n]\) and \(Y = [y_1, \dots, y_n]\), we compute:
       <br><br>
       $$ \log L = -\sum_i \frac{(x_i - y_i)^2}{2\sigma^2} $$
       <br>
-      a higher log-likelihood means the typing rhythms are more similar — suggesting the same person likely typed both.
+      a higher log-likelihood means the typing rhythms are more similar — suggesting the same person likely typed both. 
     </p>
-    <button id="startBtn">start</button>
+    <button id="startBtn">begin</button>
   </div>
 
   <div id="app" style="display:none;">
-    <h1 id="title">passage</h1>
+    <h1 id="title">passage </h1>
     <p id="meta" style="color: skyblue; font-size: 0.9rem; margin-bottom: 0.5em;"></p>
     <div id="promptBox">
-      <p id="prompt">a summoner is connecting...</p>
       <p id="overlay"></p>
     </div>
     <canvas id="chart" width="500" height="300" style="display:none;"></canvas>
     <div id="results"></div>
-    <button id="downloadBtn" style="display:none;">download ur typing biometrics</button>
-    <button id="saveImgBtn" style="display:none;">save pic</button>
-    <button id="restartBtn" style="display:none;">go back to beginning</button>
+    <button id="downloadBtn" style="display:none;">Download CSV</button>
+    <button id="saveImgBtn" style="display:none;">Save Chart</button>
+    <button id="restartBtn" style="display:none;">Back to Beginning</button>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
