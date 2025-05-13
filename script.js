@@ -48,14 +48,15 @@ function updatePrompt() {
   const current = prompts[stage];
   title.textContent = `Passage ${stage + 1}`;
   metaText.textContent = passageMeta[stage];
-  promptText.innerHTML = "";
   overlay.innerHTML = "";
   typedText = "";
   keyTimes = [];
+
   for (let i = 0; i < current.length; i++) {
     const span = document.createElement("span");
     span.textContent = current[i];
-    promptText.appendChild(span);
+    span.style.color = "#aaa";
+    overlay.appendChild(span);
   }
 }
 
