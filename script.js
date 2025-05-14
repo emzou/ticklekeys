@@ -92,15 +92,25 @@ function handleTyping(e) {
     overlay.appendChild(span);
   }
 
-  if (typedText === ref) {
-    totalChars += ref.length;
-    if (++stage < prompts.length) {
-      setTimeout(updatePrompt, 500);
-    } else {
-      document.removeEventListener("keydown", handleTyping);
-      showResults();
-    }
+  if (typedText === ref && typedText.length === ref.length) {
+  // Stop final timing
+  if (keyTimes.length > 1) {
+    timings[stage].push(performance.now() - keyTimes[keyTimes.length - 1]);
   }
+
+  totalChars += ref.length;
+  document.removeEventListener("keydown", handleTyping);
+
+  if (++stage < prompts.length) {
+    setTimeout(() => {
+      updatePrompt();
+      document.addEventListener("keydown", handleTyping);
+    }, 300);
+  } else {
+    showResults();
+  }
+}
+
 }
 
 function showResults() {
