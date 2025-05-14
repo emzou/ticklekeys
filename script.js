@@ -17,7 +17,6 @@ const intro = document.getElementById("intro");
 const app = document.getElementById("app");
 const title = document.getElementById("title");
 const metaText = document.getElementById("meta");
-const promptText = document.getElementById("prompt");
 const overlay = document.getElementById("overlay");
 const chart = document.getElementById("chart");
 const results = document.getElementById("results");
@@ -25,6 +24,7 @@ const restartBtn = document.getElementById("restartBtn");
 const downloadBtn = document.getElementById("downloadBtn");
 const saveImgBtn = document.getElementById("saveImgBtn");
 const startBtn = document.getElementById("startBtn");
+const charCounter = document.getElementById("charCounter");
 
 startBtn.onclick = () => {
   intro.style.display = "none";
@@ -51,6 +51,7 @@ function updatePrompt() {
   overlay.innerHTML = "";
   typedText = "";
   keyTimes = [];
+  charCounter.textContent = `0 / ${current.length}`;
 
   for (let i = 0; i < current.length; i++) {
     const span = document.createElement("span");
@@ -58,6 +59,16 @@ function updatePrompt() {
     span.style.color = "#aaa";
     overlay.appendChild(span);
   }
+
+  const cursor = document.createElement("span");
+  cursor.id = "cursor";
+  cursor.style.display = "inline-block";
+  cursor.style.width = "1px";
+  cursor.style.height = "1em";
+  cursor.style.background = "black";
+  cursor.style.animation = "blink 1s step-start infinite";
+  cursor.style.verticalAlign = "bottom";
+  overlay.appendChild(cursor);
 }
 
 function handleTyping(e) {
@@ -78,7 +89,10 @@ function handleTyping(e) {
   }
 
   const ref = prompts[stage];
+  charCounter.textContent = `${typedText.length} / ${ref.length}`;
   overlay.innerHTML = "";
+
+  let cursorOffset = 0;
 
   for (let i = 0; i < ref.length; i++) {
     const span = document.createElement("span");
@@ -91,32 +105,46 @@ function handleTyping(e) {
       span.style.color = "salmon";
     }
     overlay.appendChild(span);
+    if (i < typedText.length) {
+      cursorOffset += span.offsetWidth;
+    }
   }
 
-  // ✅ Check after typedText is updated
-  if (typedText === ref) {
+  // Add blinking cursor at position
+  const cursor = document.createElement("span");
+  cursor.id = "cursor";
+  cursor.style.display = "inline-block";
+  cursor.style.width = "1px";
+  cursor.style.height = "1em";
+  cursor.style.background = "black";
+  cursor.style.animation = "blink 1s step-start infinite";
+  cursor.style.verticalAlign = "bottom";
+  cursor.style.marginLeft = "2px";
+  overlay.appendChild(cursor);
+
+  // ✅ Check for full match
+  if (typedText.length === ref.length && typedText === ref) {
     totalChars += ref.length;
     document.removeEventListener("keydown", handleTyping);
     if (++stage < prompts.length) {
       setTimeout(() => {
         updatePrompt();
         document.addEventListener("keydown", handleTyping);
-      }, 200);
+      }, 300);
     } else {
       showResults();
     }
   }
 }
 
-
 function showResults() {
   const totalEnd = performance.now();
   const totalTimeMinutes = (totalEnd - totalStart) / 60000;
   const wpm = (totalChars / 5) / totalTimeMinutes;
 
-  promptText.style.display = "none";
   overlay.style.display = "none";
   metaText.style.display = "none";
+  charCounter.style.display = "none";
   title.textContent = "Results";
   chart.style.display = "block";
   restartBtn.style.display = "inline-block";
@@ -192,3 +220,4 @@ function showResults() {
     link.click();
   };
 }
+

@@ -73,7 +73,19 @@ canvas {
   vertical-align: bottom;
 }
 
+/* Cursor blink animation */
 @keyframes blink {
   50% { opacity: 0; }
 }
+
+#cursor {
+  display: inline-block;
+  width: 1px;
+  height: 1em;
+  background: black;
+  animation: blink 1s step-start infinite;
+  vertical-align: bottom;
+  margin-left: 2px;
+}
+
 
