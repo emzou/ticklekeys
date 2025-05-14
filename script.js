@@ -62,6 +62,7 @@ function updatePrompt() {
 
 function handleTyping(e) {
   if (stage >= prompts.length) return;
+
   const now = performance.now();
   if (keyTimes.length > 0) {
     timings[stage].push(now - keyTimes[keyTimes.length - 1]);
@@ -78,40 +79,35 @@ function handleTyping(e) {
 
   const ref = prompts[stage];
   overlay.innerHTML = "";
+
   for (let i = 0; i < ref.length; i++) {
     const span = document.createElement("span");
+    span.textContent = ref[i];
     if (typedText[i] === undefined) {
-      span.textContent = ref[i];
+      span.className = "";
     } else if (typedText[i] === ref[i]) {
-      span.textContent = ref[i];
       span.className = "active";
     } else {
-      span.textContent = ref[i];
       span.style.color = "salmon";
     }
     overlay.appendChild(span);
   }
 
-  if (typedText === ref && typedText.length === ref.length) {
-  // Stop final timing
-  if (keyTimes.length > 1) {
-    timings[stage].push(performance.now() - keyTimes[keyTimes.length - 1]);
-  }
-
-  totalChars += ref.length;
-  document.removeEventListener("keydown", handleTyping);
-
-  if (++stage < prompts.length) {
-    setTimeout(() => {
-      updatePrompt();
-      document.addEventListener("keydown", handleTyping);
-    }, 300);
-  } else {
-    showResults();
+  // ✅ Check after typedText is updated
+  if (typedText === ref) {
+    totalChars += ref.length;
+    document.removeEventListener("keydown", handleTyping);
+    if (++stage < prompts.length) {
+      setTimeout(() => {
+        updatePrompt();
+        document.addEventListener("keydown", handleTyping);
+      }, 200);
+    } else {
+      showResults();
+    }
   }
 }
 
-}
 
 function showResults() {
   const totalEnd = performance.now();
