@@ -61,3 +61,19 @@ canvas {
   margin-top: 2em;
   font-size: 1rem;
 }
+
+#overlay::after {
+  content: "";
+  display: inline-block;
+  width: 1px;
+  height: 1em;
+  background: black;
+  animation: blink 1s step-start infinite;
+  margin-left: 2px;
+  vertical-align: bottom;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
