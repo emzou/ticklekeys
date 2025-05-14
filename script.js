@@ -60,15 +60,7 @@ function updatePrompt() {
     overlay.appendChild(span);
   }
 
-  const cursor = document.createElement("span");
-  cursor.id = "cursor";
-  cursor.style.display = "inline-block";
-  cursor.style.width = "1px";
-  cursor.style.height = "1em";
-  cursor.style.background = "black";
-  cursor.style.animation = "blink 1s step-start infinite";
-  cursor.style.verticalAlign = "bottom";
-  overlay.appendChild(cursor);
+  placeCursor(typedText.length);
 }
 
 function handleTyping(e) {
@@ -92,8 +84,6 @@ function handleTyping(e) {
   charCounter.textContent = `${typedText.length} / ${ref.length}`;
   overlay.innerHTML = "";
 
-  let cursorOffset = 0;
-
   for (let i = 0; i < ref.length; i++) {
     const span = document.createElement("span");
     span.textContent = ref[i];
@@ -105,12 +95,34 @@ function handleTyping(e) {
       span.style.color = "salmon";
     }
     overlay.appendChild(span);
-    if (i < typedText.length) {
-      cursorOffset += span.offsetWidth;
-    }
   }
 
-  // Add blinking cursor at position
+  placeCursor(typedText.length);
+
+  if (typedText.length === ref.length) {
+    setTimeout(() => {
+      if (typedText === ref) {
+        totalChars += ref.length;
+        document.removeEventListener("keydown", handleTyping);
+        title.textContent = "✅ Complete! Moving to next passage...";
+        if (++stage < prompts.length) {
+          setTimeout(() => {
+            updatePrompt();
+            document.addEventListener("keydown", handleTyping);
+          }, 5000); // 5 second delay before next passage
+        } else {
+          showResults();
+        }
+      }
+    }, 10);
+  }
+}
+
+function placeCursor(position) {
+  const spans = overlay.querySelectorAll("span");
+  const existingCursor = document.getElementById("cursor");
+  if (existingCursor) existingCursor.remove();
+
   const cursor = document.createElement("span");
   cursor.id = "cursor";
   cursor.style.display = "inline-block";
@@ -120,20 +132,11 @@ function handleTyping(e) {
   cursor.style.animation = "blink 1s step-start infinite";
   cursor.style.verticalAlign = "bottom";
   cursor.style.marginLeft = "2px";
-  overlay.appendChild(cursor);
 
-  // ✅ Check for full match
-  if (typedText.length === ref.length && typedText === ref) {
-    totalChars += ref.length;
-    document.removeEventListener("keydown", handleTyping);
-    if (++stage < prompts.length) {
-      setTimeout(() => {
-        updatePrompt();
-        document.addEventListener("keydown", handleTyping);
-      }, 300);
-    } else {
-      showResults();
-    }
+  if (position < spans.length) {
+    spans[position].appendChild(cursor);
+  } else {
+    overlay.appendChild(cursor);
   }
 }
 
@@ -185,7 +188,9 @@ function showResults() {
   const sim13 = logLik(timings[0], timings[2]);
   const sim23 = logLik(timings[1], timings[2]);
 
-  const suspicion = Math.min(sim12, sim13, sim23) < -3000 ? "👀 Hmmm... kind of sus." : "✅ Seems consistent! Probably the same person.";
+  const suspicion = Math.min(sim12, sim13, sim23) < -3000
+    ? " kind of sus."
+    : "seems consistent! Probably the same person.";
 
   results.innerHTML = `
     <p><strong>Typing Speed:</strong> ${wpm.toFixed(1)} WPM</p>
